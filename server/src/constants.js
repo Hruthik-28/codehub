@@ -1,1 +1,0 @@
-const Judge0Url = "https://judge0-ce.p.rapidapi.com/submissions/batch"
