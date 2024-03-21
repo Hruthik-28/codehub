@@ -21,6 +21,6 @@ import submissionRouter from "./routes/submission.routes.js";
 import { healthCheck } from "./controller/test.controller.js";
 
 app.use("/api/v1", submissionRouter);
-app.use("/api/v1", healthCheck);
+app.use("/api/v1/health", healthCheck);
 
 export default app;
