@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-    baseURL: "https://judge0-ce.p.rapidapi.com",
+    baseURL: process.env.RAPID_API_BASE_URI,
     headers: {
         "content-type": "application/json",
         "X-RapidAPI-Key": process.env.X_RAPID_API_KEY,

@@ -4,13 +4,16 @@ import ApiResponse from "../utils/ApiResponse.js";
 import axios from "axios";
 import { pool } from "../index.js";
 import axiosInstance from "../utils/axiosInstance.js";
+import redis from "../utils/redis.js";
 
 function getLanguageId(code_language) {
+    code_language.toLowerCase();
+
     const languageIds = {
-        "C++": 52,
-        "Java": 62,
-        "JavaScript": 63,
-        "Python": 71,
+        "c++": 52,
+        java: 62,
+        javascript: 63,
+        python: 71
     };
 
     if (languageIds.hasOwnProperty(code_language)) {
@@ -69,6 +72,20 @@ export const submission = asyncHanlder(async (req, res) => {
 });
 
 export const getSubmissions = asyncHanlder(async (req, res) => {
+    const cachedSubmissions = await redis.get("submissions");
+
+    if (cachedSubmissions) {
+        return res
+            .status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    JSON.parse(cachedSubmissions),
+                    "Submissions fetched successfully"
+                )
+            );
+    }
+
     const [rows] = await pool.query("SELECT * FROM submissions");
 
     if (rows.length === 0) {
@@ -84,6 +101,10 @@ export const getSubmissions = asyncHanlder(async (req, res) => {
             source_code: row.source_code.substring(0, 100)
         };
     });
+
+    // cache submissions in redis for 5 seconds
+    await redis.set("submissions", JSON.stringify(limitedResult));
+    await redis.expire("submissions", 5);
 
     return res
         .status(200)

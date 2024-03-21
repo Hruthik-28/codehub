@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import { dbConnect } from "./db/dbConnect.js";
 import app from "./app.js";
+import redis from "./utils/redis.js";
 
 dotenv.config({
     path: "./.env"
